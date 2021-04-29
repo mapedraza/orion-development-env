@@ -1,0 +1,3 @@
+[submodule "fiware-orion"]
+	path = fiware-orion
+	url = git@github.com:mapedraza/fiware-orion.git
