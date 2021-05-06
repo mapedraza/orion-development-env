@@ -37,9 +37,9 @@ The source code folder available on the folder fiware-orion contais the Broker c
 Then, you can connect inside the machine (`docker-compose exec orion /bin/sh`) and build with the following command:
 
 ``` bash
-    cd /opt/fiware-orion && \
-    make && \
-    make install
+cd /opt/fiware-orion && \
+make && \
+make install
 ```
 
 And run it with:
@@ -52,11 +52,7 @@ Use this command
 
 ```
 rm /tmp/contextBroker.pid
-```
-
-# Pushing images to docker hub
-
-
+```V
 
 # Submodules
 

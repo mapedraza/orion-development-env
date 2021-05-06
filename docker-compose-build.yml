@@ -1,9 +1,11 @@
+# Executing this docker compose could take more than 15 minutes while building all Orion Dependencies
 version: '3'
 
 services:
 
   orion:
-    image: mapedraza/dev-orion:latest
+    #image: fiware/orion:${ORION_VERSION:-2.0.0}
+    build: .
     platform: linux/amd64
     volumes:
       - ./fiware-orion:/opt/fiware-orion

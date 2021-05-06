@@ -3,8 +3,7 @@ version: '3'
 services:
 
   orion:
-    #image: fiware/orion:${ORION_VERSION:-2.0.0}
-    build: .
+    image: mapedraza/dev-orion:latest
     platform: linux/amd64
     volumes:
       - ./fiware-orion:/opt/fiware-orion
