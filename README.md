@@ -88,12 +88,25 @@ git pull changes which commit their submodule directory points to. git submodule
 
 
 
-For creating a new branch
+For creating a new branch inside submodule
 ```
 cd submodule_directory
 git checkout -b task/new_feature
+git push -u origin task/new_feature
 cd ..
 git add submodule_directory
 git commit -m "created branch task/new_feature"
 git push
+```
+
+
+
+To forze synchronize submodule forked with upstream (fork father) (will copy exactly upstream to the fork deleting all changes)
+
+```
+git remote add upstream https://github.com/some_user/some_repo
+git fetch upstream
+git checkout master
+git reset --hard upstream/master  
+git push origin master --force
 ```
