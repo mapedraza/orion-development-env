@@ -46,13 +46,16 @@ And run it with:
 
 `/opt/fiware-orion/BUILD_RELEASE/src/app/contextBroker/contextBroker -fg -multiservice -ngsiv1Autocast -disableFileLog -logLevel DEBUG -noCache -dbhost mongo`
 
+
+/opt/fiware-orion/BUILD_RELEASE/src/app/contextBroker/contextBroker -fg -multiservice -ngsiv1Autocast -disableFileLog -logLevel DEBUG -noCache -dbhost mongo -logSummary 15 | tee >(sed -n '/SUMMARY/p' >healthcheck)
+
 If fails when trying to run it wiht the following message `msg=PID-file '/tmp/contextBroker.pid' found. A broker seems to be running alreadyV`
 
 Use this command
 
 ```
 rm /tmp/contextBroker.pid
-```V
+```
 
 # Submodules
 
@@ -81,4 +84,16 @@ Then, another developer who wants to have submodule_directory changed to that ta
 git pull
 git submodule update --init
 git pull changes which commit their submodule directory points to. git submodule update actually merges in the new code.
+```
+
+
+
+For creating a new branch
+```
+cd submodule_directory
+git checkout -b task/new_feature
+cd ..
+git add submodule_directory
+git commit -m "created branch task/new_feature"
+git push
 ```
