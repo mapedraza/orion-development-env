@@ -36,15 +36,10 @@ ENV CLEAN_DEV_TOOLS ${CLEAN_DEV_TOOLS:-1}
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
+WORKDIR /opt
 
 RUN \
     adduser --comment "${ORION_USER}" ${ORION_USER} && \
-    # Create infinite script for keeping the container running
-    cd /opt && \
-    mkdir script && \
-    cd script && \
-    echo "while true; do sleep 1000; done" > script.sh && \
-    chmod +x script.sh && \
     # Install dependencies
     yum -y install epel-release && \
     yum -y install \
@@ -63,12 +58,38 @@ RUN \
       tar \
       which \
       cyrus-sasl-devel && \
+    # FIXME: this is a temporary hack due to the cmake version that comes with CentOS8
+    # at the present moment (June 9th, 2021) is 3.18.2. Unfortunatelly, this version seems
+    # to have problems to build the mongo C driver (see https://jira.mongodb.org/browse/CDRIVER-4020),
+    # probably due to a bug already solved in 3.18.3. Thus, the solution is to build cmake
+    # from scratch (we have used 3.20.1, the last version by the time being). Once CentOS8
+    # upgrade cmake to a version beyond 3.18.2, we can probably remove this hack and rely again in
+    # yum-based installation
+    rpm -e cmake cmake-data cmake-filesystem cmake-rpm-macros && \
+    cd /opt && \
+    curl -OL https://github.com/Kitware/CMake/releases/download/v3.20.1/cmake-3.20.1.tar.gz && \
+    tar xvf cmake-3.20.1.tar.gz && \
+    cd cmake-3.20.1 && \
+    ./bootstrap && \
+    make && \
+    make install && \
     # Install libmicrohttpd from source
     cd /opt && \
     curl -kOL http://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-0.9.70.tar.gz && \
     tar xvf libmicrohttpd-0.9.70.tar.gz && \
     cd libmicrohttpd-0.9.70 && \
     ./configure --disable-messages --disable-postprocessor --disable-dauth && \
+    make && \
+    make install && \
+    ldconfig && \
+    # Install mosquitto from source
+    cd /opt && \
+    curl -kOL http://mosquitto.org/files/source/mosquitto-2.0.12.tar.gz && \
+    tar xvf mosquitto-2.0.12.tar.gz && \
+    cd mosquitto-2.0.12 && \
+    sed -i 's/WITH_CJSON:=yes/WITH_CJSON:=no/g' config.mk && \
+    sed -i 's/WITH_STATIC_LIBRARIES:=no/WITH_STATIC_LIBRARIES:=yes/g' config.mk && \
+    sed -i 's/WITH_SHARED_LIBRARIES:=yes/WITH_SHARED_LIBRARIES:=no/g' config.mk && \
     make && \
     make install && \
     ldconfig && \

@@ -1,21 +1,33 @@
 # FIWARE Context Broker development environmet
 
-This is a Development enviroment for Orion
+This is a Development enviroment for Orion. It install for you an environment with all the dependencies and libraries compiled and installed ready to develop new feature for Orion.
+This project contains as a git submodule the fiware-orion folder, which is shared inside the container on the path `opt/fiware-orion`
 
-For building the enviroment
+## Seting up the enviroment
+
+Before start developing new features for Orion Context Broker, you need to setup the enviroment. This means create an image with all the libraries installed
+
+For building the enviroment, you have to run
 
 `docker build -t orion .`
 
-This will create the image (it can take more than 15 minutes)
+This will create a container from base image and install dependencies (it can take more than 15 minutes). 
 
-
-For bringing up the enviroment:
+Once you have build the image, you can bringing up the enviroment:
 
 `docker-compose up -d`
 
+### Updating Dockerfile
 
+In case of Orion updates the libraries or dependencies, you will have to modify the dockerfile wiht new changes.
 
-## How to create an image a publish it to Docker hub
+For this purpose, the Dockerfile in this repo is a subset of the one in Orion repo. You have to copy all the dockerfile until starts Orion compilation
+(typically until line `# Install orion from source`). Do not forget to remove `&& \`at the end of the last line, otherwise you would get a syntaxt error while
+building the docker image.
+
+### How to create an image a publish it to Docker hub
+
+In the case you can create a docker image on Docker hub to save time next time you want to use that image, you have to follow this process:
 
 Create tag
 
@@ -25,14 +37,17 @@ docker tag 35d8c9e2eb42 mapedraza/dev-orion:latest
 docker push mapedraza/dev-orion:latest
 ```
 
+## Start developing
 
-## How to connect inside docker container
+### Editing the code
+
+The source code folder available on the folder project, `fiware-orion` contais Orion Context Broker code. You can update it or modify it usinsg your favorite IDE or editor
+
+### Compiling
+
+First, you need to connect to docker container enviroment to be able to compile the system
 
 `docker-compose exec orion /bin/sh`
-
-## How to modify the code
-
-The source code folder available on the folder fiware-orion contais the Broker code. You can update it or modify it. 
 
 Then, you can connect inside the machine (`docker-compose exec orion /bin/sh`) and build with the following command:
 
@@ -42,7 +57,9 @@ make && \
 make install
 ```
 
-And run it with:
+### Running
+
+For runing Orion, you can use the following command
 
 `/opt/fiware-orion/BUILD_RELEASE/src/app/contextBroker/contextBroker -fg -multiservice -ngsiv1Autocast -disableFileLog -logLevel DEBUG -noCache -dbhost mongo`
 
